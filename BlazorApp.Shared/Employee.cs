@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlazorApp.Shared
 {
@@ -38,5 +39,11 @@ namespace BlazorApp.Shared
 
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+
+        [NotMapped]
+        public byte[] ImageContent { get; set; }
+
+        [StringLength(2000)]
+        public string ImageName { get; set; }
     }
 }

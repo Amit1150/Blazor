@@ -1,5 +1,7 @@
 ﻿using BlazorApp.Api.Models;
 using BlazorApp.Shared;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorApp.Api.Controllers
@@ -9,10 +11,16 @@ namespace BlazorApp.Api.Controllers
     public class EmployeeController : Controller
     {
         private readonly IEmployeeRepository _employeeRepository;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public EmployeeController(IEmployeeRepository employeeRepository)
+        public EmployeeController(IEmployeeRepository employeeRepository,
+            IWebHostEnvironment webHostEnvironment,
+            IHttpContextAccessor httpContextAccessor)
         {
             _employeeRepository = employeeRepository;
+            _webHostEnvironment = webHostEnvironment;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpGet]
@@ -40,6 +48,8 @@ namespace BlazorApp.Api.Controllers
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+
 
             var createdEmployee = _employeeRepository.AddEmployee(employee);
 
