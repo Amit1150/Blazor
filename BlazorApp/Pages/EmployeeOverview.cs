@@ -1,4 +1,5 @@
-﻿using BlazorApp.Services;
+﻿using BlazorApp.Components;
+using BlazorApp.Services;
 using BlazorApp.Shared;
 using Microsoft.AspNetCore.Components;
 using System;
@@ -18,10 +19,22 @@ namespace BlazorApp.Pages
         [Inject]
         public IEmployeeDataService EmployeeDataService { get; set; }
 
+        public AddEmployeeDialog AddEmployeeDialog { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             Employees = await this.EmployeeDataService.GetAllEmployees();
         }
 
+        protected void QuickAddEmployee()
+        {
+            AddEmployeeDialog.Show();
+        }
+
+        public async void AddEmployeeDialog_OnDialogClose()
+        {
+            Employees = await this.EmployeeDataService.GetAllEmployees();
+            StateHasChanged();
+        }
     }
 }
