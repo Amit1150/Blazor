@@ -1,8 +1,10 @@
 ﻿using BlazorApp.Services;
 using BlazorApp.Shared;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace BlazorApp.Pages
@@ -30,7 +32,8 @@ namespace BlazorApp.Pages
 
         protected string CountryId = string.Empty;
         protected string JobCategoryId = string.Empty;
-
+        private IReadOnlyList<IBrowserFile> selectedFiles;
+        private ElementReference LastNameInput;
 
         protected string Message = string.Empty;
         protected string StatusClass = string.Empty;
@@ -56,6 +59,11 @@ namespace BlazorApp.Pages
             JobCategoryId = Employee.JobCategoryId.ToString();
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await LastNameInput.FocusAsync();
+        }
+
         protected async Task HandleValidSubmit()
         {
             IsSaved = false;
@@ -63,6 +71,17 @@ namespace BlazorApp.Pages
             Employee.JobCategoryId = int.Parse(JobCategoryId);
             if (Employee.EmployeeId < 1)
             {
+                if(selectedFiles != null)
+                {
+                    var file = selectedFiles[0];
+                    Stream stream = file.OpenReadStream();
+                    MemoryStream ms = new MemoryStream();
+                    await stream.CopyToAsync(ms);
+                    stream.Close();
+                    Employee.ImageName = file.Name;
+                    Employee.ImageContent = ms.ToArray();
+                }
+
                 var addEmployee = await EmployeeDataService.AddEmployee(Employee);
                 if(addEmployee != null)
                 {
@@ -103,6 +122,13 @@ namespace BlazorApp.Pages
         protected void NavigateToOverview()
         {
             NavigationManager.NavigateTo("/employeeoverview");
+        }
+
+        protected void OnInputFileChanged(InputFileChangeEventArgs e)
+        {
+            selectedFiles = e.GetMultipleFiles();
+            Message = $"{selectedFiles.Count} file(s) selected";
+            StateHasChanged();
         }
     }
 }

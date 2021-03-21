@@ -15,5 +15,7 @@
     <ProjectReference Include="..\BlazorApp.ComponentsLibrary\BlazorApp.ComponentsLibrary.csproj" />
     <ProjectReference Include="..\BlazorApp.Shared\BlazorApp.Shared.csproj" />
   </ItemGroup>
-
+  <ItemGroup>
+    <BlazorWebAssemblyLazyLoad Include="BlazorApp.ComponentsLibrary.dll"/>
+  </ItemGroup>
 </Project>

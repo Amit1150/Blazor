@@ -1,4 +1,9 @@
-<Router AppAssembly="@typeof(Program).Assembly">
+@using System.Reflection
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.WebAssembly.Services
+@inject LazyAssemblyLoader LazyAssemblyLoader
+
+<Router AppAssembly="@typeof(Program).Assembly" AdditionalAssemblies="@lazyLoadAssemblies" OnNavigateAsync="@OnNavigateAsync">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
     </Found>
@@ -8,3 +13,15 @@
         </LayoutView>
     </NotFound>
 </Router>
+@code{
+    private List<Assembly> lazyLoadAssemblies = new List<Assembly>();
+
+    private async Task OnNavigateAsync(NavigationContext args)
+    {
+        if (args.Path.Contains("employeedetail"))
+        {
+            var assemblies = await LazyAssemblyLoader.LoadAssembliesAsync(new string[] { "BlazorApp.ComponentsLibrary.dll" });
+            lazyLoadAssemblies.AddRange(assemblies);
+        }
+    }
+}

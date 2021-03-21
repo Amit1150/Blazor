@@ -49,6 +49,12 @@ namespace BlazorApp.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            string currentUrl = _httpContextAccessor.HttpContext.Request.Host.Value;
+            var path = $"{_webHostEnvironment.WebRootPath}\\uploads\\{employee.ImageName}";
+            var fileStream = System.IO.File.Create(path);
+            fileStream.Write(employee.ImageContent, 0, employee.ImageContent.Length);
+            fileStream.Close();
+            employee.ImageName = $"http://{currentUrl}/uploads/{employee.ImageName}";
 
 
             var createdEmployee = _employeeRepository.AddEmployee(employee);
@@ -93,6 +99,18 @@ namespace BlazorApp.Api.Controllers
             _employeeRepository.DeleteEmployee(id);
 
             return NoContent();//success
+        }
+
+        [HttpGet("long")]
+        public IActionResult GetLongEmployeeList()
+        {
+            return Ok(_employeeRepository.GetLongEmployeeList());
+        }
+
+        [HttpGet("long/{startindex}/{count}")]
+        public IActionResult GetLongEmployeeList(int startIndex, int count)
+        {
+            return Ok(_employeeRepository.GetTakeLongEmployeeList(startIndex, count));
         }
     }
 }

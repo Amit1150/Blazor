@@ -1,4 +1,4 @@
-﻿namespace BlazorApp.ComponentsLibrary.Map
+﻿namespace BlazorApp.Shared
 {
     public class Marker
     {
